@@ -83,8 +83,9 @@ class ReconstructionViewModel(app: Application) : AndroidViewModel(app) {
                 }
                 _state.update { it.copy(progressText = "Stabilizing…") }
                 kotlinx.coroutines.delay(50)
-                if (result.measurement == null) {
-                    val reason = result.perPhoto.firstOrNull { it.note != null }?.note
+                if (result.measurement?.measurement == null) {
+                    val reason = result.measurement?.note
+                        ?: result.perPhoto.firstOrNull { it.note != null }?.note
                         ?: "Could not measure — retake with more viewpoint spread."
                     _state.update {
                         it.copy(loading = false, result = result, error = reason)

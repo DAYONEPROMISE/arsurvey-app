@@ -139,6 +139,14 @@ private fun friendlyError(raw: String): String = when {
         "Measurement models aren't bundled — see README assets/models/."
     raw.contains("cancel", ignoreCase = true) -> "Reconstruction cancelled."
     raw.contains("3 photos", ignoreCase = true) -> raw
+    raw.contains("3 good viewpoints", ignoreCase = true) -> raw
+    raw.contains("spread", ignoreCase = true) -> raw
+    raw.contains("too few points", ignoreCase = true) -> raw
+    raw.contains("no valid floor", ignoreCase = true) -> raw
+    raw.contains("no footprint", ignoreCase = true) -> raw
+    raw.contains("no detection", ignoreCase = true) -> raw
+    raw.contains("no target", ignoreCase = true) -> raw
+    raw.contains("mask", ignoreCase = true) -> raw
     raw.contains("depth", ignoreCase = true) ->
         "A photo has no depth — retake it from a steadier angle."
     raw.contains("tracking", ignoreCase = true) ->

@@ -52,8 +52,10 @@ object MeasurementCalculator {
      * centroid) for the 3-view reconstruction to be trusted. Three shots from nearly the same spot
      * add no parallax — the footprint collapses to one viewing direction and W/D are underestimated.
      * Skipped when fewer than 2 usable views carry a camera position (nothing to compare).
+     * 12° (was 20°): distant objects physically can't subtend 20° without walking meters —
+     * the footprint estimator already rejects degenerate clouds downstream.
      */
-    private const val MIN_SPREAD_DEG = 20f
+    private const val MIN_SPREAD_DEG = 12f
 
     fun compute(result: ReconstructionResult): PredictedMeasurement {
         val totalViews = result.perPhoto.size
