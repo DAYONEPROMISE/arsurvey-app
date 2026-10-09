@@ -1,0 +1,7 @@
+<resources>
+    <!-- Pure-Compose app: the Activity only needs a valid no-action-bar theme. -->
+    <style name="Theme.ARSurvey" parent="android:Theme.Material.NoActionBar">
+        <item name="android:statusBarColor">#00000000</item>
+        <item name="android:windowLayoutInDisplayCutoutMode">shortEdges</item>
+    </style>
+</resources>
