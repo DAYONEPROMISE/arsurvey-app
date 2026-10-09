@@ -92,7 +92,13 @@ fun ReconstructionScreen(photos: List<CapturedPhoto>, onBack: () -> Unit) {
         }
 
         when {
-            state.error != null -> ErrorCard(message = state.error!!, onBack = onBack)
+            state.error != null -> ErrorCard(
+                message = state.error!!,
+                details = state.result?.perPhoto?.mapNotNull { pc ->
+                    pc.note?.let { "Photo ${pc.index + 1}: $it" }
+                } ?: emptyList(),
+                onBack = onBack,
+            )
             state.loading -> LoadingView(text = state.progressText ?: "Working…", onCancel = vm::cancel)
             state.result != null -> ResultView(state.result!!)
             else -> CenterText("No data")
@@ -117,11 +123,14 @@ private fun LoadingView(text: String, onCancel: () -> Unit) {
     }
 }
 
-/** Designed error state: icon + one-line cause + one action. Never a raw exception string. */
+/** Designed error state: icon + one-line cause + per-photo details + one action. Never a raw exception string. */
 @Composable
-private fun ErrorCard(message: String, onBack: () -> Unit) {
+private fun ErrorCard(message: String, details: List<String>, onBack: () -> Unit) {
     Box(modifier = Modifier.fillMaxSize().padding(24.dp), contentAlignment = Alignment.Center) {
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.verticalScroll(rememberScrollState()),
+        ) {
             Text("⚠", fontSize = 40.sp)
             Text(
                 friendlyError(message),
@@ -129,6 +138,14 @@ private fun ErrorCard(message: String, onBack: () -> Unit) {
                 fontSize = 15.sp,
                 modifier = Modifier.padding(vertical = 12.dp),
             )
+            details.forEach { line ->
+                Text(
+                    "• $line",
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    fontSize = 13.sp,
+                    modifier = Modifier.padding(vertical = 2.dp),
+                )
+            }
             TextButton(onClick = onBack) { Text("Back to photos") }
         }
     }
@@ -152,7 +169,9 @@ private fun friendlyError(raw: String): String = when {
     raw.contains("tracking", ignoreCase = true) ->
         "Tracking was lost for this set — retake with slower motion."
     raw.startsWith("Failed", ignoreCase = true) -> raw
-    else -> "Couldn't measure this set — retake with more viewpoint spread."
+    // Every other note is already a designed string from the pipeline — show it verbatim
+    // so the cause is never hidden behind a generic line again.
+    else -> raw
 }
 
 /** What the top viewport shows: the 3D cloud, or a per-photo image with box/mask overlays. */
