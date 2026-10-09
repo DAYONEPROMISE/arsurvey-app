@@ -40,3 +40,11 @@ jobs:
           name: ${{ github.ref_type == 'tag' && github.ref_name || 'Debug build' }}
           body: ${{ github.ref_type == 'tag' && 'Versioned release APK.' || 'Latest debug APK from main.' }}
           artifacts: app/build/outputs/apk/debug/app-debug.apk
+      - name: Publish versioned release
+        if: github.ref_type != 'tag'
+        uses: ncipollo/release-action@v1
+        with:
+          tag: v0.8.${{ github.run_number }}
+          name: v0.8.${{ github.run_number }}
+          body: Automated versioned APK from main.
+          artifacts: app/build/outputs/apk/debug/app-debug.apk
