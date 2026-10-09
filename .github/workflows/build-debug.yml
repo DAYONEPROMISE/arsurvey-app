@@ -3,6 +3,7 @@ name: Build Debug APK
 on:
   push:
     branches: [main]
+    tags: ['v*']
   workflow_dispatch:
 
 jobs:
@@ -30,12 +31,12 @@ jobs:
         with:
           name: app-debug
           path: app/build/outputs/apk/debug/app-debug.apk
-      - name: Publish debug-latest release
+      - name: Publish release
         uses: ncipollo/release-action@v1
         with:
-          tag: debug-latest
+          tag: ${{ github.ref_type == 'tag' && github.ref_name || 'debug-latest' }}
           allowUpdates: true
           replacesArtifacts: true
-          name: Debug build
-          body: Latest debug APK from main.
+          name: ${{ github.ref_type == 'tag' && github.ref_name || 'Debug build' }}
+          body: ${{ github.ref_type == 'tag' && 'Versioned release APK.' || 'Latest debug APK from main.' }}
           artifacts: app/build/outputs/apk/debug/app-debug.apk
