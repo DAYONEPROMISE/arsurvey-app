@@ -8,6 +8,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v4
       - name: Make gradlew executable
@@ -28,3 +30,12 @@ jobs:
         with:
           name: app-debug
           path: app/build/outputs/apk/debug/app-debug.apk
+      - name: Publish debug-latest release
+        uses: ncipollo/release-action@v1
+        with:
+          tag: debug-latest
+          allowUpdates: true
+          replacesArtifacts: true
+          name: Debug build
+          body: Latest debug APK from main.
+          artifacts: app/build/outputs/apk/debug/app-debug.apk
