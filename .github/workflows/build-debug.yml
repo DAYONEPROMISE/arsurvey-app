@@ -40,7 +40,7 @@ jobs:
           path: app/build/outputs/apk/release/*.apk
       - name: Read app version
         run: |
-          VER=$(grep -hoP 'versionName\s*=?\s*"\K[0-9.]+' app/build.gradle app/build.gradle.kts 2>/dev/null | head -1)
+          VER=$(grep -hoP 'versionName\s*=?\s*[\x27\x22]\K[0-9.]+' app/build.gradle app/build.gradle.kts 2>/dev/null | head -1)
           CODE=$(grep -hoP 'versionCode\s*=?\s*\K[0-9]+' app/build.gradle app/build.gradle.kts 2>/dev/null | head -1)
           echo "APP_VERSION=${VER:-0.0.0}" >> "$GITHUB_ENV"
           echo "APP_CODE=${CODE:-0}" >> "$GITHUB_ENV"
