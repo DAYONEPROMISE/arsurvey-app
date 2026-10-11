@@ -38,6 +38,20 @@ jobs:
         with:
           name: app-release
           path: app/build/outputs/apk/release/*.apk
+      - name: Read app version
+        run: |
+          VER=$(grep -hoP 'versionName\s*=?\s*"\K[0-9.]+' app/build.gradle app/build.gradle.kts 2>/dev/null | head -1)
+          CODE=$(grep -hoP 'versionCode\s*=?\s*\K[0-9]+' app/build.gradle app/build.gradle.kts 2>/dev/null | head -1)
+          echo "APP_VERSION=${VER:-0.0.0}" >> "$GITHUB_ENV"
+          echo "APP_CODE=${CODE:-0}" >> "$GITHUB_ENV"
+      - name: Publish release APK to GitHub Release
+        uses: ncipollo/release-action@v1
+        with:
+          tag: release-v${{ env.APP_VERSION }}-b${{ github.run_number }}
+          allowUpdates: false
+          name: ARSurvey release APK v${{ env.APP_VERSION }} (build ${{ github.run_number }})
+          body: Release (unsigned, test only) build of ARSurvey v${{ env.APP_VERSION }}+${{ env.APP_CODE }} from commit ${{ github.sha }}. Debug APKs continue to publish under debug-latest and versioned v0.8 tags.
+          artifacts: "app/build/outputs/apk/release/*.apk"
       - name: Publish release
         uses: ncipollo/release-action@v1
         with:
